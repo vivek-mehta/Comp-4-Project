@@ -45,28 +45,37 @@
         error_reporting(1);
         $x = $_POST["InitialX"];
         $y = $_POST["InitialY"];
+        $InitialX = $_POST["InitialX"];
+        $InitialY = $_POST["InitialY"];
         $YArray = array();
         $XArray = array();
         array_push($YArray, $y);
         array_push($XArray, $x);
         $TargetXValue = $_POST["TargetXValue"];
         $StepVal = $_POST["StepVal"];
-        $StepVal2 = $_GET["StepVal"];
-        echo $StepVal2;
-        $MaxIterations = $TargetXValue/$StepVal;
+        $MaxIterations = abs($TargetXValue/$StepVal);
         $Grad = 0;//gradient
+        $InfCheck = 0;
+        //$i = 0;
+      //  while (($InfCheck != INF OR $InfCheck != -INF) AND $i < $MaxIterations){
         for ($i=0; $i < $MaxIterations ; $i++) {
           $x = $XArray[$i];//startin x value
           $y = $YArray[$i];//starting y value
           $Grad = DEGetter($x, $y);
           $YNext = $y + $Grad*$StepVal;
+        //  if ($YNext == INF){
+            //break;
+          //}
           array_push($XArray, ($x+$StepVal));
           array_push($YArray, $YNext);
+        //  $i = $i + 1;
+          $InfCheck = $YArray[$i];
+        //}
         }
         //echo"<br><br><br> X VALS";
         //print_r($XArray);
         //echo "<br><br><br> Y VALS";
-      //  print_r($YArray);
+        //print_r($YArray);
         //$X1 = $XArray[1];
         //$Y1 = $YArray[1];
         //echo "<br><br> X INDEX TEST: [$X1, $Y1]";
@@ -93,11 +102,11 @@
         //    echo "<br><br> $DeEquation<br><br><br>";
           //print_r($DEArray);
           //MathFunc($DEArray);
-          $Gradient = Brackets(Subtraction(Addition(Multiplication(Division(Indices(Brackets(MathFunc(Subtitute(DecimalPoint(Num($DEArray)), $x, $y)), $x, $y)))))), $x, $y);
+          $Gradient = Brackets(Subtraction(Addition(Multiplication(Division(Indices(Brackets(MathFunc(Substitute(DecimalPoint(Num($DEArray)), $x, $y)), $x, $y)))))), $x, $y);
           return($Gradient[0]);
 
           /*while (count($DEArray) > 1){
-            $DeArray = Subtraction(Addition(Multiplication(Division(Indices(Subtitute( DecimalPoint(Num($DEArray)), $x, $y))))) );
+            $DeArray = Subtraction(Addition(Multiplication(Division(Indices(Substitute( DecimalPoint(Num($DEArray)), $x, $y))))) );
           }*/
           //while $DEArray[$i + Stepper] !==
           /*$DigitArray = array( "0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
@@ -197,13 +206,13 @@
             elseif ($Func === "tanh"){
               $Result = tanh($Val);
             }
-            elseif ($Func === "arcsinh"){
+            elseif ($Func === "arsinh"){
               $Result = asinh($Val);
             }
-            elseif ($Func === "arccosh"){
+            elseif ($Func === "arcosh"){
               $Result = acosh($Val);
             }
-            elseif ($Func === "arctanh"){
+            elseif ($Func === "artanh"){
               $Result = atanh($Val);
             }
             elseif ($Func === "e"){
@@ -212,7 +221,7 @@
             elseif ($Func === "ln"){
               $Result = log($Val);
             }
-            /*elseif ($Func === "log"){ // Closed function for nowyh I understands. does it work? Idk we need to concate the stuff first?
+            /*elseif ($Func === "log"){ // Closed function HARD TO PROGRAMME
               $Result = log($Val);
             }*/
 
@@ -237,7 +246,7 @@
             return($Result);
           }
 
-          function Subtitute($DEArray, $x, $y){
+          function Substitute($DEArray, $x, $y){
             $Operators = array("^", "/", "*", "+", "-", "(", ")", "");
             $Character = 0;
             $WorkingArray = array();
@@ -386,7 +395,7 @@
                   $b = $b + 1;
                 }
                 for ($c = $a+1; $c < $b; $c++){
-                  $Abcdefd = $DEArray[$c];
+                  //$Abcdefd = $DEArray[$c];
                 //  echo "<br><br>DEARRAY[C] $Abcdefd";
                   array_push($WorkingArray, $DEArray[$c]);
                 //  echo("<br><br>BracWA:");
@@ -632,86 +641,89 @@
         <center><div id="curve_chart" style="width: 900px; height: 700px"></div></center>
         <script type="text/javascript">
         //BAD VERSION REVERT WHEN GOOGLE FIXES package 44  google.charts.load('current', {'packages':['corechart']});
-        google.charts.load('44', {'packages':['corechart']});
+          google.charts.load('current', {'packages':['corechart']});
           google.charts.setOnLoadCallback(drawChart);
-
           function drawChart() {
-            console.log("Creating chart");
+            //console.log("Creating chart");
             var data = google.visualization.arrayToDataTable([
-              ['X', 'Y'],
+              [' X', 'Y'],
               <?php
               for ($i=0; $i <= $MaxIterations; $i++) {
                 $X1 = $XArray[$i];
                 $Y1 = $YArray[$i];
+                if ($YArray[$i] == "" or $YArray[$i] == INF or $YArray[$i] == -INF){
+                  break;
+                }
                 echo "[" . $X1 . "," . $Y1 . "],";
                 echo "\n";
               }
               ?>
              ]);
-
             var options = {
               title: 'dy/dx = <?php echo($DeEquation); ?>',
               curveType: 'function',
             };
-
             var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
             chart.draw(data, options);
           }
         </script>
-        <form class="col s12" method="post">
+        <form class="col s12" action="finalequation.php" method="post">
         <div class="row">
           <div class="input-field col s12">
-            <input id="StepVal" type="text" class="validate" name="StepVal">
+            <input id="StepVal" type="number" class="validate" name="StepVal" required="" min="0.001" max="<?php echo $TargetXValue; ?>" step ="any">
             <label for="StepVal">Step Value</label>
+            <input id="DeEquation" type="hidden" name="DeEquation" value="<?php echo $DeEquation;?>">
+            <input id="InitialX" type="hidden" name="InitialX" value="<?php echo $InitialX;?>" >
+            <input id="InitialY" type="hidden" name="InitialY" value="<?php echo $InitialY; ?>" >
+            <input id="TargetXValue" type="hidden" name="TargetXValue" value="<?php echo $TargetXValue; ?>">
           </div>
         </div>
-<div class="grid-example col s12">
-                      <button onclick="__doPostBack('ctl00$body$ctl01','')" class="btn waves-effect waves-light" style="display: block; width: 100%;" type="submit" name="action" value="update">
-                          Submit
-                          <i class="mdi-content-send right"></i>
-                      </button>
-                  </div>
-
+        <div class="grid-example col s12">
+          <button class="btn waves-effect waves-light" style="display: block; width: 100%;" type="submit" name="action" value="update">
+            Submit
+            <i class="mdi-content-send right"></i>
+          </button>
+        </div>
+        </form>
 
         <!--<div id="curve_chart" style="width: 900px; height: 500px"></div>-->
         </div>
         <form class="col s12" method="post">
           <div class="row">
             <div class="input-field col s12">
-              <input id="DeEquation" type="text" class="validate" name="DeEquation">
+              <input id="DeEquation" type="text" class="validate" name="DeEquation" required="">
               <label for="DeEquation">Differential Equation f(x, y)</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s6">
-              <input id="InitialX" type="text" class="validate" name="InitialX">
+              <input id="InitialX" type="number" class="validate" name="InitialX" required="">
               <label for="InitialX">Initial X Value</label>
             </div>
             <div class="input-field col s6">
-              <input id="InitialY" type="text" class="validate" name="InitialY">
+              <input id="InitialY" type="number" class="validate" name="InitialY" required="">
               <label for="InitialY">Initial Y Value</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="StepVal" type="text" class="validate" name="StepVal">
+              <input id="StepVal" type="number" class="validate" name="StepVal" required="" min="0.001" max="<?php echo $TargetXValue; ?>" step ="any">
               <label for="StepVal">Step Value</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="TargetXValue" type="text" class="validate" name="TargetXValue">
+              <input id="TargetXValue" type="number" class="validate" name="TargetXValue" required="">
               <label for="TargetXValue">Target X Value</label>
             </div>
           </div>
-  <div class="grid-example col s12">
-                        <button onclick="__doPostBack('ctl00$body$ctl01','')" class="btn waves-effect waves-light" style="display: block; width: 100%;" type="submit" name="action">
-                            Submit
-                            <i class="mdi-content-send right"></i>
-                        </button>
-                    </div>
-                </div>
+          <div class="grid-example col s12">
+            <button onclick="__doPostBack('ctl00$body$ctl01','')" class="btn waves-effect waves-light" style="display: block; width: 100%;" type="submit" name="action" value="update">
+              Submit
+              <i class="mdi-content-send right"></i>
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>

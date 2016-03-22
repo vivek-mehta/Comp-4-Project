@@ -45,29 +45,29 @@
         <form class="col s12" action="finalequation.php" method="post">
           <div class="row">
             <div class="input-field col s12">
-              <input id="DeEquation" type="text" class="validate" name="DeEquation">
+              <input id="DeEquation" type="text" class="validate" name="DeEquation" required="">
               <label for="DeEquation">Differential Equation f(x, y)</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s6">
-              <input id="InitialX" type="text" class="validate" name="InitialX">
+              <input id="InitialX" type="number" class="validate" name="InitialX" required="" step = "any">
               <label for="InitialX">Initial X Value</label>
             </div>
             <div class="input-field col s6">
-              <input id="InitialY" type="text" class="validate" name="InitialY">
+              <input id="InitialY" type="number" class="validate" name="InitialY" required="" step = "any">
               <label for="InitialY">Initial Y Value</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="StepVal" type="text" class="validate" name="StepVal">
+              <input id="StepVal" type="number" class="validate" name="StepVal" required="" min="0.001" max="10000" step ="any">
               <label for="StepVal">Step Value</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="TargetXValue" type="text" class="validate" name="TargetXValue">
+              <input id="TargetXValue" type="number" class="validate" name="TargetXValue" required="">
               <label for="TargetXValue">Target X Value</label>
             </div>
           </div>
