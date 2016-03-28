@@ -41,8 +41,23 @@
   <div class="container">
     <div class="section">
       <?php
-        function DEGetter()
-        {
+        $x = $_POST["InitialX"];
+        $y = $_POST["InitialY"];
+        $YArray = array();
+        $XArray = array();
+        array_push($YArray, $y);
+        array_push($XArray, $x);
+        $MaxIterations = $_POST["iterations"];
+        $StepVal = $_POST["StepVal"];
+        for ($i=0; $i < $MaxIterations ; $i++) {
+          $x = $XArray[$i];
+          $y = $YArray[$i];
+          array_push($XArray, ($x+$StepVal));
+          array_push($YArray, $y);
+          DEGetter($x, $y);
+        }
+
+        function DEGetter($x, $y){
           $DeEquation = $_POST["DeEquation"]; // Get input from user in the previous page and gets sumbitted to this page
           $DEArray = array(); // Create an array to hold the equation
           for( $i = 0; $i < strlen( $DeEquation ); $i++ ) { // A for loop from 0 to the length of the Equation given by the user to append each character of the equation to the array = DeArray
@@ -60,9 +75,8 @@
           }*/
           echo "<br><br> $DeEquation<br><br><br>";
           print_r($DEArray);
-          $x = 0.5;
-          $y = 2;
-          Subtraction(Addition(Multiplication(Division(Indices(Brackets(Subtitute( DecimalPoint(Num($DEArray)), $x, $y), $x, $y))))) );
+          Subtraction(Addition(Multiplication(Division(Indices(Brackets(Subtitute(DecimalPoint(Num($DEArray)), $x, $y), $x, $y))))));
+
           /*while (count($DEArray) > 1){
             $DeArray = Subtraction(Addition(Multiplication(Division(Indices(Subtitute( DecimalPoint(Num($DEArray)), $x, $y))))) );
           }*/
@@ -124,20 +138,56 @@
         function Subtitute($DEArray, $x, $y){
           $Operators = array("^", "/", "*", "+", "-", "(", ")", "");
           $Character = 0;
+          $WorkingArray = array();
+          $NewChr = "";
           while ($Character < count($DEArray)) {
-            if ($DEArray[$Character] == "x"){
+            if ($DEArray[$Character] === "x"){
               array_splice($DEArray, $Character, 1 , $x);
               if (!(in_array($DEArray[$Character-1], $Operators)) AND !(in_array($DEArray[$Character+1], $Operators))){
-                array_splice($DEArray, $Character+1, 0 , ")");
+                /*array_splice($DEArray, $Character+1, 0 , ")");
                 array_splice($DEArray, $Character, 0 , "*");
-                array_splice($DEArray, $Character-1, 0 , "(");
+                array_splice($DEArray, $Character-1, 0 , "(");*/
+                array_push($WorkingArray, "(");
+                array_push($WorkingArray, $DEArray[$Character-1]);
+                array_push($WorkingArray, "*");
+                array_push($WorkingArray, $x);
+                array_push($WorkingArray, ")");
+                echo("<br><br> SubstWA: ");
+                print_r($WorkingArray);
+                $NewChr = Brackets($WorkingArray, $x, $y);
+                array_splice($DEArray, $Character-1, 2 , $NewChr);
+              }elseif ($DEArray[$Character-1] === "^"){
+                array_push($WorkingArray, "(");
+                array_push($WorkingArray, $x);
+                array_push($WorkingArray, "*");
+                array_push($WorkingArray, $DEArray[$Character+1]);
+                array_push($WorkingArray, ")");
+                $NewChr = Brackets($WorkingArray, $x, $y);
+                array_splice($DEArray, $Character-1, 2 , $NewChr);
               }
-            }elseif($DEArray[$Character] == "y"){
+            }elseif($DEArray[$Character] === "y"){
               array_splice($DEArray, $Character, 1 , $y);
               if (!(in_array($DEArray[$Character-1], $Operators)) AND !(in_array($DEArray[$Character+1], $Operators))){
-                array_splice($DEArray, $Character+1, 0 , ")");
+                /*array_splice($DEArray, $Character+1, 0 , ")");
                 array_splice($DEArray, $Character, 0 , "*");
-                array_splice($DEArray, $Character-1, 0 , "(");
+                array_splice($DEArray, $Character-1, 0 , "(");*/
+                array_push($WorkingArray, "(");
+                array_push($WorkingArray, $DEArray[$Character-1]);
+                array_push($WorkingArray, "*");
+                array_push($WorkingArray, $y);
+                array_push($WorkingArray, ")");
+                echo("<br><br> SubstWA: ");
+                print_r($WorkingArray);
+                $NewChr = Brackets($WorkingArray, $x, $y);
+                array_splice($DEArray, $Character-1, 2 , $NewChr);
+              }elseif ($DEArray[$Character-1] === "^"){
+                array_push($WorkingArray, "(");
+                array_push($WorkingArray, $y);
+                array_push($WorkingArray, "*");
+                array_push($WorkingArray, $DEArray[$Character+1]);
+                array_push($WorkingArray, ")");
+                $NewChr = Brackets($WorkingArray, $x, $y);
+                array_splice($DEArray, $Character-1, 2 , $NewChr);
               }
             }
             $Character = $Character + 1;
@@ -189,7 +239,7 @@
           $Character = 0;
           $NewChr = "";
           while ($Character < count($DEArray)) {
-            if ((is_numeric($DEArray[$Character])) AND ($DEArray[$Character+1] == ".") AND (is_numeric($DEArray[$Character+2]))){
+            if ((is_numeric($DEArray[$Character])) AND ($DEArray[$Character+1] === ".") AND (is_numeric($DEArray[$Character+2]))){
               $NewChr = $DEArray[$Character].$DEArray[$Character+1].$DEArray[$Character+2];
               array_splice($DEArray, $Character, 3 , $NewChr);
             }
@@ -201,17 +251,86 @@
         }
 
         function Brackets($DEArray, $x, $y){
-          $a = 0;
+          if (($DEArray[0] === "(" ) AND ($DEArray[count($DEArray) - 1] === ")" )) {
+            echo("Running new code thing...");
+            for ($i=1; $i < count($DEArray) - 1; $i++) {
+              echo("<br>i: $i");
+              $NewChr = $DEArray[$i];
+              echo("<br>array: $NewChr");
+              if ($DEArray[$i] === ")" ){
+                echo("<br>I broke");
+                break;
+              } else {
+                echo("<br><br>Start: ");
+                print_r($DEArray);
+                array_splice($DEArray, 0, 1);
+                echo("<br><br>Step 1: ");
+                print_r($DEArray);
+                array_splice($DEArray, count($DEArray) - 1, 1);
+                echo("<br><br>Step 2: ");
+                print_r($DEArray);
+                $NewChr = Subtraction(Addition(Multiplication(Division(Indices(Brackets($DEArray, $x, $y)))))); // array doesnt exist
+                echo "<br>NewChr = ";
+                print_r($NewChr);
+                array_splice($DEArray, 0, count($DEArray), $NewChr);
+                break;
+              }
+            }
+          } else {
+            $a = 0;
+            while($a < count($DEArray)){
+              $WorkingArray = array();
+              $NewChr = "";
+              if ($DEArray[$a] == "(") {
+                $Stepper = 0;
+                $b = $a + $Stepper + 1;
+                while (($DEArray[$b] != ")") AND ($b < count($DEArray))){
+                  $Stepper = $Stepper + 1;
+                  $b = $b + $Stepper;
+                }
+                for ($c = $a+1; $c < $b; $c++){
+                  $Abcdefd = $DEArray[$c];
+                  echo "<br><br>DEARRAY[C] $Abcdefd";
+                  array_push($WorkingArray, $DEArray[$c]);
+                  echo("<br><br>BracWA:");
+                  print_r($WorkingArray);
+                  echo("<br><br>BracDEA:");
+                  print_r($DEArray);
+                }
+                $NewChr = Subtraction(Addition(Multiplication(Division(Indices(Brackets($WorkingArray, $x, $y))))));
+                echo "<br>NewChr = $NewChr";
+                array_splice($DEArray, $a, $b-$a+1, $NewChr);
+              }
+              $a = $a + 1;
+            }
+          }
+
+          /*$a = 0;
+          $b = 0;
           while($a < count($DEArray)){
             $WorkingArray = array();
             $NewChr = "";
-            if ($DEArray[$a] == "(") {
-              $Stepper = 0;
-              $b = $a + $Stepper + 1;
-              while (($DEArray[$b] != ")") AND ($b < count($DEArray))){
-                $Stepper = $Stepper + 1;
-                $b = $b + $Stepper;
+            if (($DEArray[0] === "(") AND ($DEArray[count($DEArray)-1] === ")")){
+              echo("<br><br> This bit is executuing now!!!! <br>");
+              $WorkingArray = $DEArray;
+              array_splice($WorkingArray, 0, 1);
+              echo("<br> Working Array 1: ");
+              print_r($WorkingArray);
+              array_splice($WorkingArray, count($WorkingArray)-1, 1);
+              echo("<br> Working Array 2: ");
+              print_r($WorkingArray);
+              if ((!in_array("(", $WorkingArray)) AND (!in_array(")", $WorkingArray))){// this if sttement doesn't execute
+                $a = 0;
+                $b = count($DEArray)-1;
+              } else {
+                $Stepper = 0;
+                $b = $a + $Stepper + 1;
+                while (($DEArray[$b] != ")") AND ($b < count($DEArray))){
+                  $Stepper = $Stepper + 1;
+                  $b = $b + $Stepper;
+                }
               }
+              echo("<br><br>b = $b");
               for ($c = $a+1; $c < $b; $c++){
                 $Abcdefd = $DEArray[$c];
                 echo "<br><br>DEARRAY[C] $Abcdefd";
@@ -222,11 +341,35 @@
                 print_r($DEArray);
               }
               $NewChr = Subtraction(Addition(Multiplication(Division(Indices(Brackets($WorkingArray, $x, $y))))));
-              echo "<br>NewChr = $NewChr";
+              //echo "<br>NewChr = $NewChr";
               array_splice($DEArray, $a, $b-$a+1, $NewChr);
+              $a = $a + 1;
+              $WorkingArray = array();
+            }elseif ($DEArray[$a] === "(") {
+              $Stepper = 0;
+              $b = $a + $Stepper + 1;
+              while (($DEArray[$b] != ")") AND ($b < count($DEArray))){
+                $Stepper = $Stepper + 1;
+                $b = $b + $Stepper;
+              }
+              echo("<br><br>b = $b");
+              for ($c = $a+1; $c < $b; $c++){
+                $Abcdefd = $DEArray[$c];
+                echo "<br><br>DEARRAY[C] $Abcdefd";
+                array_push($WorkingArray, $DEArray[$c]);
+                echo("<br><br>BracWA:");
+                print_r($WorkingArray);
+                echo("<br><br>BracDEA:");
+                print_r($DEArray);
+              }
+              $NewChr = Subtraction(Addition(Multiplication(Division(Indices(Brackets($WorkingArray, $x, $y))))));
+              //echo "<br>NewChr = $NewChr";
+              array_splice($DEArray, $a, $b-$a+1, $NewChr);
+              $a = $a + 1;
+            }/*else{
+              array_splice($DEArray, 0, 0, );
             }
-            $a = $a + 1;
-          }
+          }*/
           echo("<br><br>Brackets:");
           print_r($DEArray);
           return($DEArray);
@@ -236,7 +379,7 @@
           $Character = 0;
           $NewChr = "";
           while ($Character < count($DEArray)) {
-            if ($DEArray[$Character] == "^"){
+            if ($DEArray[$Character] === "^"){
               $NewChr = pow($DEArray[$Character-1], $DEArray[$Character+1]);
               array_splice($DEArray, $Character-1, 3 , $NewChr);
               $Character = 0;
@@ -252,7 +395,7 @@
           $Character = 0;
           $NewChr = "";
           while ($Character < count($DEArray)) {
-            if ($DEArray[$Character] == "/"){
+            if ($DEArray[$Character] === "/"){
               $NewChr = (floatval($DEArray[$Character-1])/floatval($DEArray[$Character+1]));
               array_splice($DEArray, $Character-1, 3 , $NewChr);
               $Character = 0;
@@ -268,15 +411,24 @@
           $Character = 0;
           $NewChr = "";
           while ($Character < count($DEArray)) {
-            if ($DEArray[$Character] == "*"){
-              $NewChr = ($DEArray[$Character-1]*$DEArray[$Character+1]);
+            //echo("<br>");
+            //print_r($DEArray);
+            //echo("<br>");
+            if ($DEArray[$Character] === "*"){
+              $NewChr = floatval(($DEArray[$Character-1])*floatval($DEArray[$Character+1]));
               array_splice($DEArray, $Character-1, 3 , $NewChr);
               $Character = 0;
+            }elseif (($DEArray[$Character]==="0") OR ($DEArray[$Character+1]==="0")){
+              array_splice($DEArray, $Character, 2 , 0);
+              $Character = 0;
             }elseif ((is_numeric($DEArray[$Character])) AND (is_numeric($DEArray[$Character+1]))) {
-              $NewChr = ($DEArray[$Character]*$DEArray[$Character+1]);
+              $NewChr = (floatval($DEArray[$Character])*floatval($DEArray[$Character+1]));
               array_splice($DEArray, $Character, 2 , $NewChr);
               $Character = 0;
             }
+            //echo("<br>");
+            //print_r($DEArray);
+            //echo("<br>");
             $Character = $Character + 1;
           }
           echo("<br><br>Mul:");
@@ -288,7 +440,7 @@
           $Character = 0;
           $NewChr = "";
           while ($Character < count($DEArray)) {
-            if ($DEArray[$Character] == "+"){
+            if ($DEArray[$Character] === "+"){
               $NewChr = (floatval($DEArray[$Character-1])+floatval($DEArray[$Character+1]));
               array_splice($DEArray, $Character-1, 3 , $NewChr);
               $Character = 0;
@@ -303,8 +455,14 @@
         function Subtraction($DEArray){
           $Character = 0;
           $NewChr = "";
+          if ($DEArray[0] === "-"){
+            $NewChr = $DEArray[0].$DEArray[1];
+            array_splice($DEArray, 0 , 2, $NewChr);
+            $NewChr = "";
+          }
+
           while ($Character < count($DEArray)) {
-            if ($DEArray[$Character] == "-"){
+            if ($DEArray[$Character] === "-"){
               $NewChr = ($DEArray[$Character-1]-$DEArray[$Character+1]);
               array_splice($DEArray, $Character-1, 3 , $NewChr);
               $Character = 0;
@@ -315,11 +473,47 @@
           print_r($DEArray);
           return($DEArray);
         }
-        DEGetter();
       ?>
 
 
+
         </div>
+        <form class="col s12" method="post">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="DeEquation" type="text" class="validate" name="DeEquation">
+              <label for="DeEquation">Differential Equation f(x, y)</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="InitialX" type="text" class="validate" name="InitialX">
+              <label for="InitialX">Initial X Value</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="InitialY" type="text" class="validate" name="InitialY">
+              <label for="InitialY">Initial Y Value</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="StepVal" type="text" class="validate" name="StepVal">
+              <label for="StepVal">Step Value</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="iterations" type="text" class="validate" name="iterations">
+              <label for="iterations">Number Of Iterations</label>
+            </div>
+          </div>
+  <div class="grid-example col s12">
+                        <button onclick="__doPostBack('ctl00$body$ctl01','')" class="btn waves-effect waves-light" style="display: block; width: 100%;" type="submit" name="action">
+                            Submit
+                            <i class="mdi-content-send right"></i>
+                        </button>
+                    </div>
+                </div>
       </div>
 
     </div>

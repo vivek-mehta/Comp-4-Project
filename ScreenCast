@@ -38,14 +38,24 @@
   </div>
 
 
-          <h1>VIEWING</h1>
-        <section align="left">
+  <div class="container">
+    <div class="section">
+      <div class="row">
+      </div>
+        <h1>VIEWING</h1>
+        <section>
           <img id="screenshot">
         </section>
 
         <script src="app.js"></script>
         <script src="viewer.js"></script>
+    </div>
+    <br><br>
 
+    <div class="section">
+
+    </div>
+  </div>
 
   <footer class="page-footer cyan lighten-2">
     <div class="container">

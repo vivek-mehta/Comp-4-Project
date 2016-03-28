@@ -9,26 +9,26 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" src="../comp4/js/googlechart.js"></script>
 </head>
 
 <body>
   <nav class="cyan" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="index.html" class="brand-logo">Euler's Method</a>
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Euler's Method</a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="equation.php">Euler's Method</a></li>
+        <li><a href="#">Euler's Method</a></li>
         <!--<li><a href="#">Integrating Factor Method</a></li>-->
-        <li><a href="ScreenCast.html">View ScreenCast</a></li>
-        <li><a href="About.html">About</a></li>
-        <li><a href="Contact.html">Contact</a></li>
+        <li><a href="#">View ScreenCast</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
       </ul>
 
       <ul id="nav-mobile" class="side-nav">
-        <li><a href="equation.php">Euler's Method</a></li>
+        <li><a href="#">Euler's Method</a></li>
         <!--<li><a href="#">Integrating Factor Method</a></li>-->
-        <li><a href="ScreenCast.html">View ScreenCast</a></li>
-        <li><a href="About.html">About</a></li>
-        <li><a href="Contact.html">Contact</a></li>
+        <li><a href="#">View ScreenCast</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
       </ul>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
     </div>
@@ -56,9 +56,6 @@
         $MaxIterations = abs($TargetXValue/$StepVal);
         $Grad = 0;//gradient
         $InfCheck = 0;
-        if ($StepVal > $TargetXValue){
-          echo ('<h2 class="header center blue-grey-text">You have entered a step value that is larger than the TargetXValue, Please re-enter values below</h2>');
-        }
         //$i = 0;
       //  while (($InfCheck != INF OR $InfCheck != -INF) AND $i < $MaxIterations){
         for ($i=0; $i < $MaxIterations ; $i++) {
@@ -224,10 +221,6 @@
             elseif ($Func === "ln"){
               $Result = log($Val);
             }
-            else {
-              echo('<h2 class="header center blue-grey-text">You have entered a math function that is not recognized, Please go back to previous page</h2>');
-              exit();
-            }
             /*elseif ($Func === "log"){ // Closed function HARD TO PROGRAMME
               $Result = log($Val);
             }*/
@@ -258,15 +251,15 @@
             $Character = 0;
             $WorkingArray = array();
             $NewChr = "";
-            $Value = 0; //Will be a temporary holder of the value of variable (x or y) currently being substituted :)
+            $Var = 0; //Will be a temporary holder of the value of variable (x or y) currently being substituted :)
             while ($Character < count($DEArray)) {
               if ($DEArray[$Character] === "x"){
-                $Value = $x;
-                array_splice($DEArray, $Character, 1 , $Value);
+                $Var = $x;
+                array_splice($DEArray, $Character, 1 , $Var);
               }
               if ($DEArray[$Character] === "y"){
-                $Value = $y;
-                array_splice($DEArray, $Character, 1 , $Value);
+                $Var = $y;
+                array_splice($DEArray, $Character, 1 , $Var);
               }
               $Character = $Character + 1;
             }
@@ -746,19 +739,17 @@
       <div class="row">
         <div class="col l6 s12">
           <h5 class="white-text">Information</h5>
-          <p class="grey-text text-lighten-4">This website solves first order differential equations<br>using Euler's Method Algorithm to produce an<br>approixmate solution to this differential
-equation</p>
+          <p class="grey-text text-lighten-4">...<br>...<br>...</p>
 
 
         </div>
         <div class="col l5 s12 right">
           <h5 class="white-text">Navigation</h5>
           <ul>
-            <li><a class="white-text" href="equation.php">Euler's Method</a></li>
+            <li><a class="white-text" href="#!">About</a></li>
+            <li><a class="white-text" href="#!">Euler's Method</a></li>
             <!--<li><a class="white-text" href="#!">Integrating Factor Method</a></li> -->
-            <li><a class="white-text" href="ScreenCast.html">View ScreenCast</a></li>
-            <li><a class="white-text" href="About.html">About</a></li>
-            <li><a class="white-text" href="Contact.html">Contact</a></li>
+            <li><a class="white-text" href="#!">View ScreenCast</a></li>
           </ul>
         </div>
       </div>
