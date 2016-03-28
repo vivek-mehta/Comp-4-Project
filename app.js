@@ -1,4 +1,4 @@
-var WS_HOST = '188.166.154.159:3000';
+var WS_HOST = '178.62.72.121:3000';
 
 function connect() {
   ws = new WebSocket('ws://' + WS_HOST, 'dumby-protocol');
